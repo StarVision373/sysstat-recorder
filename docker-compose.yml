@@ -1,0 +1,23 @@
+services:
+  sysstat-recorder:
+    build: .
+    container_name: sysstat-recorder
+    restart: unless-stopped
+    privileged: true
+    ports:
+      - "8080:8080"
+    volumes:
+      - sysstat-data:/data
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+    environment:
+      SYSSTAT_INTERVAL: "3600"      # collect every 1 hour
+      SYSSTAT_RETENTION: "60"       # keep 60 days of data
+      SYSSTAT_PORT: "8080"
+      SYSSTAT_HOST: "0.0.0.0"
+    # Mount host filesystem for accurate disk metrics
+    pid: "host"
+    network_mode: "host"
+
+volumes:
+  sysstat-data:
